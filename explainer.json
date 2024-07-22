@@ -1,0 +1,14 @@
+{
+  "info": [
+    {
+      "key": "Git",
+      "content": [
+        {
+          "family":"branch",
+          "description": "Create new branch",
+          "command":"git switch -c <branch-name>"
+        }
+      ]
+    }
+  ]
+}
