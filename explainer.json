@@ -4,12 +4,14 @@
       "key": "Git",
       "content": [
         {
-          "family":"Branch",
-          "exec":[{
-            "detail":"Create",
-            "command":"git switch -c <branch-name>",
-            "description": "Create new branch"
-          }]
+          "family": "Branch",
+          "exec": [
+            {
+              "detail": "Create",
+              "command": "git switch -c <branch-name>",
+              "description": "Create new branch"
+            }
+          ]
         }
       ]
     }
