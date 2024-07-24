@@ -28,9 +28,10 @@ type FileData struct {
 
 func main() {
 	// defining the flags
-	key_flag := flag.String("key", "", "")
-	family_flag := flag.String("family", "", "")
-	detail_flag := flag.String("detail", "", "")
+	key_flag := flag.String("k", "", "")
+	family_flag := flag.String("f", "", "")
+	detail_flag := flag.String("d", "", "")
+	list_flag := flag.Bool("l", false, "")
 	flag.Parse()
 
 	// reading from file
@@ -53,18 +54,29 @@ func main() {
 		return i.Key == *key_flag
 	})
 	info := data.Info[info_idx]
+	if *family_flag != "" {
+		content_idx := slices.IndexFunc(info.Content, func(c Content) bool {
+			return c.Family == *family_flag
+		})
+		content := info.Content[content_idx]
+		fmt.Println("Family:", content.Family)
 
-	content_idx := slices.IndexFunc(info.Content, func(c Content) bool {
-		return c.Family == *family_flag
-	})
-	content := info.Content[content_idx]
-	fmt.Println("Family:", content.Family)
-
-	for _, exec := range content.Exec {
-		if exec.Detail == *detail_flag {
-			fmt.Println("====================== ======================")
-			fmt.Println("Command:", exec.Command)
-			fmt.Println("Description:", exec.Description)
+		for _, exec := range content.Exec {
+			if exec.Detail == *detail_flag {
+				fmt.Println("====================== ======================")
+				fmt.Println("Command:", exec.Command)
+				fmt.Println("Description:", exec.Description)
+			} else if *list_flag {
+				fmt.Println("====================== ======================")
+				fmt.Println("Detail:", exec.Detail)
+				fmt.Println("Description:", exec.Description)
+			}
+		}
+	} else {
+		fmt.Print("\n\n")
+		for _, cnt := range info.Content {
+			fmt.Println(" >:", cnt.Family)
+			fmt.Println("========================")
 		}
 	}
 }
