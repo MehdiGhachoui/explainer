@@ -7,6 +7,7 @@ import (
 	"io"
 	"os"
 	"slices"
+	"strings"
 )
 
 type Exec struct {
@@ -50,33 +51,37 @@ func main() {
 	}
 
 	json.Unmarshal(jsonByte, &data)
-	info_idx := slices.IndexFunc(data.Info, func(i Info) bool {
-		return i.Key == *key_flag
-	})
-	info := data.Info[info_idx]
-	if *family_flag != "" {
-		content_idx := slices.IndexFunc(info.Content, func(c Content) bool {
-			return c.Family == *family_flag
-		})
-		content := info.Content[content_idx]
-		fmt.Println("Family:", content.Family)
+	fmt.Print("\n\n")
 
-		for _, exec := range content.Exec {
-			if exec.Detail == *detail_flag {
-				fmt.Println("====================== ======================")
-				fmt.Println("Command:", exec.Command)
-				fmt.Println("Description:", exec.Description)
-			} else if *list_flag {
-				fmt.Println("====================== ======================")
-				fmt.Println("Detail:", exec.Detail)
-				fmt.Println("Description:", exec.Description)
-			}
+	if *list_flag {
+
+		for _, cnt := range data.Info {
+			fmt.Println(" >:", cnt.Key)
+			fmt.Println("========================")
 		}
 	} else {
-		fmt.Print("\n\n")
-		for _, cnt := range info.Content {
-			fmt.Println(" >:", cnt.Family)
-			fmt.Println("========================")
+		info_idx := slices.IndexFunc(data.Info, func(i Info) bool {
+			return strings.ToLower(i.Key) == strings.ToLower(*key_flag)
+		})
+		info := data.Info[info_idx]
+
+		if *key_flag != "" && *family_flag == "" && *detail_flag == "" {
+			for _, cnt := range info.Content {
+				fmt.Println(" >:", cnt.Family)
+				fmt.Println("========================")
+			}
+		} else if *family_flag != "" && *key_flag != "" && *detail_flag == "" {
+			content_idx := slices.IndexFunc(info.Content, func(c Content) bool {
+				return strings.ToLower(c.Family) == strings.ToLower(*family_flag)
+			})
+			content := info.Content[content_idx]
+
+			for _, exec := range content.Exec {
+				fmt.Println("====================== ======================")
+				fmt.Println("-", exec.Description)
+
+				fmt.Println("\n>", exec.Command)
+			}
 		}
 	}
 }
